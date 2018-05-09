@@ -2,24 +2,77 @@
 //  LoginViewController.swift
 //  Parse Chat
 //
-//  Created by Elijah Kumi on 2/25/18.
+//  Created by Elijah Kumi on 4/29/18.
 //  Copyright © 2018 Elijah Kumi. All rights reserved.
 //
 
 import UIKit
+import Parse 
 
-private let reuseIdentifier = "Cell"
-
-class LoginViewController: UICollectionViewController {
+class LoginViewController: UIViewController {
+    
+    @IBOutlet weak var UsernameText: UITextField!
+    
+    @IBOutlet weak var PassswordText: UITextField!
+    
+    @IBAction func SignUp(_ sender: Any) {
+        
+        let newUser = PFUser()
+        newUser.username = UsernameText.text
+        newUser.password = PassswordText.text
+        
+        if (UsernameText.text?.isEmpty)! || (PassswordText.text?.isEmpty)! {
+            AlertControllers(title: "Warning", message: "username or password cannot be empty")
+        }
+        
+        
+        
+        newUser.signUpInBackground { (success: Bool, error: Error?) in
+            if success {
+                print("Success!")
+            } else {
+                print(error?.localizedDescription)
+            }
+        }
+        
+    }
+    
+    
+    
+    @IBAction func Login(_ sender: Any) {
+        if (UsernameText.text?.isEmpty)! || (PassswordText.text?.isEmpty)! {
+            AlertControllers(title: "Warning!", message: "username or password cannot be empty")
+        }
+        
+        
+        PFUser.logInWithUsername(inBackground: UsernameText.text! , password: .text!) { (user: PFUser? , error: Error?) in
+            
+            if user != nil {
+                print("You're logged in")
+                self.performSegue(withIdentifier: "LoginSegue", sender: nil)
+            }
+        }
+    }
+    
+    
+    func AlertControllers(title: String, message: String){
+        let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        
+        // create an OK action
+        let OKAction = UIAlertAction(title: "OK", style: .default) { (action) in
+            // handle response here.
+            alert.dismiss(animated: true, completion: nil)
+        }
+        // add the OK action to the alert controller
+        alert.addAction(OKAction)
+        
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
-        // Uncomment the following line to preserve selection between presentations
-        // self.clearsSelectionOnViewWillAppear = false
-
-        // Register cell classes
-        self.collectionView!.register(UICollectionViewCell.self, forCellWithReuseIdentifier: reuseIdentifier)
 
         // Do any additional setup after loading the view.
     }
@@ -28,66 +81,15 @@ class LoginViewController: UICollectionViewController {
         super.didReceiveMemoryWarning()
         // Dispose of any resources that can be recreated.
     }
+    
 
     /*
     // MARK: - Navigation
 
     // In a storyboard-based application, you will often want to do a little preparation before navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using [segue destinationViewController].
+        // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
-    }
-    */
-
-    // MARK: UICollectionViewDataSource
-
-    override func numberOfSections(in collectionView: UICollectionView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
-    }
-
-
-    override func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        // #warning Incomplete implementation, return the number of items
-        return 0
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: reuseIdentifier, for: indexPath)
-    
-        // Configure the cell
-    
-        return cell
-    }
-
-    // MARK: UICollectionViewDelegate
-
-    /*
-    // Uncomment this method to specify if the specified item should be highlighted during tracking
-    override func collectionView(_ collectionView: UICollectionView, shouldHighlightItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment this method to specify if the specified item should be selected
-    override func collectionView(_ collectionView: UICollectionView, shouldSelectItemAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    */
-
-    /*
-    // Uncomment these methods to specify if an action menu should be displayed for the specified item, and react to actions performed on the item
-    override func collectionView(_ collectionView: UICollectionView, shouldShowMenuForItemAt indexPath: IndexPath) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, canPerformAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) -> Bool {
-        return false
-    }
-
-    override func collectionView(_ collectionView: UICollectionView, performAction action: Selector, forItemAt indexPath: IndexPath, withSender sender: Any?) {
-    
     }
     */
 
